@@ -1,8 +1,23 @@
-from lab_1.caesarCipher import encode
+from caesarCipher import encode
 
 
 def alpha_ind(letter, alphabet):
     return alphabet.find(letter)
+
+
+def is_whole(number):
+    return int(number + 1) - number == 1
+
+
+def comb(n):
+    res = []
+    i = n
+    while i >= 0:
+        res.append([n, i])
+        if n != i:
+            res.append([i, n])
+        i -= 1
+    return res
 
 
 def encode_linear(text, alphabet, a, b):
@@ -13,10 +28,6 @@ def encode_linear(text, alphabet, a, b):
         encoded_text += encode(letter, alphabet, key)
         position += 1
     return encoded_text
-
-
-def is_whole(number):
-    return int(number + 1) - number == 1
 
 
 def linear_coefficients(encoded_text, decoded_text, alphabet):
@@ -85,25 +96,71 @@ def linear_coefficients(encoded_text, decoded_text, alphabet):
     return [a, b]
 
 
-def comb(n):
-    res = []
-    i = n
-    while i >= 0:
-        res.append([n, i])
-        if n != i:
-            res.append([i, n])
-        i -= 1
-    return res
+def encode_quadratic(text, alphabet, a, b, c):
+    encoded_text = []
+    for p in range(len(text)):
+        if text[p] in alphabet:
+            key = (alpha_ind(text[p], alphabet) + a * (p ** 2) + b * p + c) % len(alphabet)
+            encoded_text.append(alphabet[key])
+        else:
+            encoded_text.append(text[p])
+    return "".join(encoded_text)
 
 
-str_1 = "HARD AS A ROCK"
-print("Original string: " + str_1)
+def decode_quadratic(text, alphabet, a, b, c):
+    decoded_text = []
+    for p in range(len(text)):
+        if text[p] in alphabet:
+            key = (alpha_ind(text[p], alphabet) - (a * (p ** 2) + b * p + c)) % len(alphabet)
+            decoded_text.append(alphabet[key])
+        else:
+            decoded_text.append(text[p])
+    return "".join(decoded_text)
 
-# Linear trithemius cipher
-A = ord("A")
-alpha = "".join([chr(x) for x in range(A, A + 26)])
-encoded = encode_linear(str_1, alpha, 5, 4)
-coefs = linear_coefficients(encoded, str_1, alpha)
-print(f"Coefficients (a and b respectively): + {coefs}")
-print("Encoded string: " + encoded)
 
+# # Linear trithemius cipher
+# str_1 = "HARD AS A ROCK"
+# print("Original string: " + str_1)
+# A = ord("A")
+# alpha = "".join([chr(x) for x in range(A, A + 26)])
+# encoded = encode_linear(str_1, alpha, 5, 4)
+# coefs = linear_coefficients(encoded, str_1, alpha)
+# print(f"Coefficients (a and b respectively): + {coefs}")
+# print("Encoded string: " + encoded)
+# LJFW DA S TVOB
+
+
+# Quadratic trithemius cipher encoding
+# str_2 = "London is the capital of Great Britain".upper()
+# A = ord("A")
+# alpha = "".join([chr(x) for x in range(A, A + 26)])
+# a = 2
+# b = 2
+# c = 2
+# encoded = encode_quadratic(str_2, alpha, a, b, c)
+# print(f"Encoded: {encoded}")
+# print(decode_quadratic(encoded, alpha, a, b, c))
+# NUBDEX SI HNG IOPYDIV OT ITKOT LZSJAWT
+
+
+# Linear decoding
+# A = ord("A")
+# alpha = "".join([chr(x) for x in range(A, A + 26)])
+# original = "encoded text".upper()
+# encoded = "julclekxy sfay".upper()
+# coefs = linear_coefficients(encoded, original, alpha)
+# print(f"Coefficients: {coefs}")
+# coefs [2,5]
+
+
+# Quadratic trithemius cipher decoding (brute force)
+# str = "wkil rnf cgsgoirncm".upper()
+# A = ord("A")
+# alpha = "".join([chr(x) for x in range(A, A + 26)])
+# print("-----------")
+# for a in range(1, 6):
+#     for b in range(1, 6):
+#         for c in range(1, 6):
+#             print(f"Encoded (a={a}, b={b}, c={c}): {decode_quadratic(str, alpha, a, b, c)}")
+#             print("--------")
+# result: Encoded (a=1, b=2, c=3): TEXT FOR ENCRYPTION

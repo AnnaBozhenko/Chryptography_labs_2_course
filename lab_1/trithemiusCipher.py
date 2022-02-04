@@ -154,6 +154,7 @@ def decode_quadratic(text, alphabet, a, b, c):
 
 
 # Quadratic trithemius cipher decoding (brute force)
+
 # str = "wkil rnf cgsgoirncm".upper()
 # A = ord("A")
 # alpha = "".join([chr(x) for x in range(A, A + 26)])
@@ -161,6 +162,7 @@ def decode_quadratic(text, alphabet, a, b, c):
 # for a in range(1, 6):
 #     for b in range(1, 6):
 #         for c in range(1, 6):
-#             print(f"Encoded (a={a}, b={b}, c={c}): {decode_quadratic(str, alpha, a, b, c)}")
+#             print(f"Decoded (a={a}, b={b}, c={c}): {decode_quadratic(str, alpha, a, b, c)}")
 #             print("--------")
+
 # result: Encoded (a=1, b=2, c=3): TEXT FOR ENCRYPTION

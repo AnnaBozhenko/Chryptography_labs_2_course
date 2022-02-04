@@ -22,19 +22,22 @@ def decode(text, alphabet, step):
 
 if __name__ == "__main__":
     # Encoding of the given string
-    str = "There is no love sincerer than the love of food".upper()
-    A = ord('A')
-    alpha = "".join([chr(i) for i in range(A, A + 26)])
-    encode(str, alpha, 5)
-    print(f"Encoded string: {str}")
+    # str = "There is no love sincerer than the love of food".upper()
+    # A = ord('A')
+    # alpha = "".join([chr(i) for i in range(A, A + 26)])
+    # encode(str, alpha, 5)
+    # print(f"Encoded string: {str}")
 
 
     # Decoding of the given string
-    # str = """Duw lv wkh surshu wdvn ri olih.""".upper()
-    # print("Encoded string: " + str)
-    # A = ord('A')
-    # alpha = "".join([chr(i) for i in range(A, A + 26)])
-    # print("------------------------------")
-    # for i in range(26):
-    #     decoded = decode(str, alpha, i)
-    #     print(f"Decoded string({i}): {decoded}")
+    str = """Duw lv wkh surshu wdvn ri olih.""".upper()
+    print("Encoded string: " + str)
+    A = ord('A')
+    alpha = "".join([chr(i) for i in range(A, A + 26)])
+    print("------------------------------")
+    with open(r"D:\g.txt", 'w') as f:
+        for i in range(26):
+            decoded = decode(str, alpha, i)
+            s = f"Decoded string(key = {i}): {decoded}"
+            f.write(s + "\n")
+            print(s)

@@ -19,7 +19,8 @@ def decode(text, alphabet, step):
             decoded_text += symb
     return decoded_text
 
-if (__name__ == "__main__"):
+
+if __name__ == "__main__":
     # Encoding of the given string
     str = "There is no love sincerer than the love of food".upper()
     A = ord('A')

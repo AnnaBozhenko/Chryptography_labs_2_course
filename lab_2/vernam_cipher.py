@@ -8,7 +8,7 @@ def key_in_bytes(rand_seed, text):
 
 
 def string_repres_of_bytes(byte_object):
-  return ' '.join(["{0:b}".format(x) for x in byte_object])
+  return ' '.join(["{0:08b}".format(x) for x in byte_object])
  
 
 def encode_vernam(text, rand_seed, encoding_f, logging = True):

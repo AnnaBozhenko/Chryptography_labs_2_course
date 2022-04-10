@@ -40,13 +40,13 @@ def str_bytes_to_bytes(str):
 # ciphered_t = ciphered[0]
 # key = ciphered[1]
 # deciphered = decode_vernam(ciphered_t, key, ENCODING)
-# print(f"deciphered: {deciphered}")
 
 
 # Deciphering
 # -----------
 key_str = "1111001 1000010 10111101 11110010 100001 110 11110000 10000100 1110111"
 enciphered_str = "110001 1011 11111010 10111010 1101001 1001001 10100000 11000001 100100"
+print('-' * len("01001000 01001001 01000111 01001000 01001000 01001111 01010000 01000101 01010011"))
 key = str_bytes_to_bytes(key_str)
 enciph = str_bytes_to_bytes(enciphered_str)
 enciphered = decode_vernam(enciph, key, ENCODING)

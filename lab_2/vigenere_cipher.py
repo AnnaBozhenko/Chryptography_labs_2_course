@@ -45,7 +45,7 @@ alphabet = eng_alpha()
 print(alphabet)
 string = "WHATAWONDERFULWORLD"
 key = "SUNRISE"
-# encoded = vigenere_encode(string, key, alphabet)
-# print(encoded)
-print(vigenere_decode("dmsbdwymmztxd".upper(), "kivi".upper(), alphabet))
+encoded = vigenere_encode(string, key, alphabet)
+print(encoded)
+# print(vigenere_decode("dmsbdwymmztxd".upper(), "kivi".upper(), alphabet))
 # table(alphabet)

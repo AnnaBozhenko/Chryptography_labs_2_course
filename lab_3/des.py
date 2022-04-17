@@ -1,4 +1,6 @@
 #-*- coding: utf8 -*-
+ENCRYPT = 0
+DECRYPT = 1
 
 def string_to_bit_array(text):#Convert a string into a list of bits
     array = list()
@@ -153,36 +155,64 @@ class DES():
         self.text = text
 
         if action == ENCRYPT:
+            # show log
+            print(f"\n{' ENCRYPTION '.center(114, '=')}\n")
             if padding:
                 self.addPadding()
             elif len(self.text) % 8 != 0:
                 raise "Text length must be divisible by 8 if padding not supplied."
-
+    
         self.generatekeys()        
 
         if action == DECRYPT:
+            # show log
+            print(f"\n{' DECRYPTION '.center(114, '=')}\n")
             self.keys.reverse()
 
         text_blocks = nsplit(self.text, 8)
-
         result = []
         for block in text_blocks: 
             block = string_to_bit_array(block)
+            # show log            
+            print("#"*114)
+            show_log("Block:", show_bit_arr(block, 8), 42)
+
             block = self.permute(block, DES.__PI) 
             left, right = nsplit(block, 32) 
             tmp = None
 
             for i in range(16): 
-                right_e = self.permute(right, DES.__E) 
+                # show log
+                print(f"--ROUND #{i}--")
+                show_log(f"Left_{i}:", show_bit_arr(left, 8), 42)
+                show_log(f"Right_{i}:", show_bit_arr(right, 8), 42)
+
+                right_e = self.permute(right, DES.__E)
+                # show log
+                show_log(f"Key_{i}:", show_bit_arr(self.keys[i], 8), 42)
+                show_log(f"Right_{i} (after permutation):", show_bit_arr(right_e, 8), 42)
+
                 tmp = self.xor(self.keys[i], right_e)
+                # show log
+                show_log(f"Right_{i} (after XOR with key_{i}:", show_bit_arr(tmp, 8), 42)
 
                 tmp = self.substitute(tmp) 
+                # show log
+                show_log(f"Right_{i} (after passing through S-boxes):", show_bit_arr(tmp, 4), 42)
+
                 tmp = self.permute(tmp, DES.__P)
+                # show log
+                show_log(f"Right_{i} (after permutation):", show_bit_arr(tmp, 8), 42)
+
                 tmp = self.xor(left, tmp)
+                # show log
+                show_log(f"{i} XOR changed Right_{i}:", show_bit_arr(tmp, 8), 42)
                 left = right
                 right = tmp
 
             result += self.permute(right + left, DES.__PI_1) 
+            # show log
+            show_log(f"Final result:", show_bit_arr(result[-64:], 8), 42)
 
         final_res = bit_array_to_string(result)
         if action == DECRYPT and padding:
@@ -215,13 +245,24 @@ class DES():
     def generatekeys(self):
         """ Generate all 16 bit shifted versions of key at once"""
         self.keys = []
+
+        print(f"\n{' KEYS GENERATING '.center(114, '=')}\n")
         key = string_to_bit_array(self.password)
-        key = self.permute(key, DES.__CP_1) 
+        key = self.permute(key, DES.__CP_1)
+
+        show_log("Key permutation:", show_bit_arr(key, 8), 42) 
         left, right = nsplit(key, 28) 
+        show_log("Splitted key (left part):", show_bit_arr(left, 4), 42)
+        show_log("Splitted key (right part):", show_bit_arr(left, 4), 42)
         for i in range(16): 
             left, right = self.shift(left, right, DES.__SHIFT[i]) 
+            show_log(f"Shifted left_{i} part", show_bit_arr(left, 4), 42)
+            show_log(f"Shifted right_{i} part:", show_bit_arr(right, 4), 42)
             tmp = left + right 
+            show_log("United parts:", show_bit_arr(tmp, 8), 42)
             self.keys.append(self.permute(tmp, DES.__CP_2)) 
+            show_log(f"Permuted key_{i}", show_bit_arr(self.keys[-1], 8), 42)
+        print("#"*114)
 
 
     def shift(self, left, right, n):
@@ -253,36 +294,52 @@ class DES():
 def hex_string_to_text(hex_string):
     return [chr(int(x, 16)) for x in hex_string.split()]
 
+
 def text_to_hex_string(text):
     return ' '.join('{0:0>2}'.format(hex(ord(x))[2:].upper()) for x in text)
 
-def show_byte_blocks(text):
-    return ''.join(str(x) for x in string_to_bit_array(text))
 
+def show_byte_blocks(text):
+    """text - string, function returns string in byte-blocks representation, 
+    where every byte corresponds to ascii number of char"""
+    s = []
+    for i in text:
+        a = bin(ord(i))[2:]
+        if len(a) > 8:
+            raise "Binary value larger than the expected size."
+        s.append((8 - len(a)) * '0' + a)
+    return ' '.join(s)
+
+
+def show_bit_arr(arr, n):
+    """arr - array of bits, function returns string representation of bits grouped in n-blocks"""
+    return ' '.join(''.join(str(c) for c in i) for i in nsplit(arr, n))
+
+
+def show_log(first_p, last_p, n):
+    """function prints log that contains first_p aligned to left on n, and then prints last_p"""
+    print(f"{first_p:_<{n}} {last_p}")
+  
 
 if __name__ == '__main__':
 
-    k = "blowaway"
-    t = "How about if I sleep a little bit longer and forget all this nonsense"
-    need_to_pad = not len(t) % 8 == 0
-    # text = "Two wrongs don't make a right.  " #The length of the text must be a multiple of 8
-    # key_hex =  'FE DC BA 98 76 54 32 10'
-    # key_hex =  '13 34 57 79 9B BC DF F1'
-    # text_hex = '01 23 45 67 89 AB CD EF'
+    t = "EC 0D 8C 83 00 78 14 63 25 CE B5 27 9F E4 73 69"
+    key_hex =  '13 34 57 79 9B BC DF F1'
+    t = hex_string_to_text(t)
+    k = hex_string_to_text(key_hex)
+    # need_to_pad = not len(t) % 8 == 0
+
+    print(f"Key as blocks of bytes: {show_byte_blocks(k)}")
+    print(f"Text as blocks of bytes: {show_byte_blocks(t)}") 
+    # print(f"Text as blocks of bytes: {show_bit_arr(t, 8)}")
+
     
-    # key = hex_string_to_text(key_hex) 
-    print("Key as blocks of bytes:")
-    print(show_byte_blocks(k))
-    print("Text as blocks of bytes:")
-    print(show_byte_blocks(t))
-
-    # text = hex_string_to_text(text_hex)
     d = DES()
-    r = d.encrypt(k, t, need_to_pad)
+    # r = d.encrypt(k, t, False)
 
-    r2 = d.decrypt(k, r, need_to_pad)
-    print(f"Ciphered: {r!r}")
+    r2 = d.decrypt(k, t, False)
+    # show_log("Ciphered:", f"{r!r}", 42)
+    show_log("Deciphered:", f"{r2!r}", 42)
     # print("Ciphered (hex): {0}".format(text_to_hex_string(r)))
-    print(f"Deciphered: {r2!r}")
-    # print("Deciphered (hex): {0}".format(text_to_hex_string(r2)))
+    print("Deciphered (hex): {0}".format(text_to_hex_string(r2)))
     

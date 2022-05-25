@@ -144,14 +144,19 @@ if __name__ == "__main__":
     # log_message(f"Enciphered info: {enciphered}")
 
     # example 1.b to elgamal cipher
-    m_val = 1009
-    p_val = 4153
-    g_val = 2
-    y_val = 1423
-    log_message(f"Let's cipher info: {m_val}")
-    ciphered = elgamal_cipher(m_val, (p_val, g_val, y_val))
-    log_message(f"Ciphered info: {ciphered}")
+    # m_val = 1009
+    # p_val = 4153
+    # g_val = 2
+    # y_val = 1423
+    # log_message(f"Let's cipher info: {m_val}")
+    # ciphered = elgamal_cipher(m_val, (p_val, g_val, y_val))
+    # log_message(f"Ciphered info: {ciphered}")
 
-
+    log_message("Let's encipher with k = 11")
+    enciphered1 = elgamal_encipher((2048, 405), x = 5, p = 4153)
+    log_message(f"Enciphered: {enciphered1}")
+    log_message("Let's encipher with k = 5")
+    enciphered2 = elgamal_encipher((32, 2630), x = 5, p = 4153)
+    log_message(f"Enciphered: {enciphered2}")
 
 

@@ -1,9 +1,5 @@
-import rsa
-import pprint
-import re
 from hash_functions import encode_content_sha1
 from display_keys import get_key, log_msg
-from hash_sign import SHA1_BIT_LENGTH
 
 BLOCK_SIZE = 2**20
 KEY_SIZE = 1024

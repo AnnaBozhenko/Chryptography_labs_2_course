@@ -1,4 +1,3 @@
-from distutils.filelist import findall
 from hash_functions import encode_content_sha1
 from display_keys import get_key, log_msg
 

@@ -5,7 +5,7 @@ BLOCK_SIZE = 2**20
 KEY_SIZE = 1024
 FILE_NAME = 'zayava.docx'
 PUBLIC_KEY_FILE = 'public_key_1024.pem'
-SHA1_BIT_LENGTH = 20 * 8
+SHA1_DIGEST_SIZE = 20
 raw_file = open(FILE_NAME, 'rb').read()
 
 
@@ -28,15 +28,15 @@ with open(FILE_NAME + '.sgn', 'rb') as inf:
 publ_key = get_key(PUBLIC_KEY_FILE, 'pb')
 
 # get hash and metadata with the signature and public key
-M = decrypt_rsa(signature, publ_key, SHA1_BIT_LENGTH)
-log_msg(f"Extracted metadata: \n{M[:-20].decode(encoding='utf8')}{M[-20:]}")
+M = decrypt_rsa(signature, publ_key, SHA1_DIGEST_SIZE * 8)
+log_msg(f"Extracted metadata: \n{M[:-SHA1_DIGEST_SIZE].decode(encoding='utf8')}{M[-SHA1_DIGEST_SIZE:]}")
 
 
 # hash_from_signature = metadata_and_hash[-20:]
 pattern = b'file hash: '
 start_index = M.find(pattern) + len(pattern)
 # extract 20 following bytes, which hash occupies
-hash_from_signature = M[start_index : start_index + 20]
+hash_from_signature = M[start_index : start_index + SHA1_DIGEST_SIZE]
 log_msg(f"Hash from file: {hashed_data}")
 log_msg(f"Hash from signature: {hash_from_signature}")
 log_msg(f"Varification was successful: {hashed_data == hash_from_signature}")

@@ -1,14 +1,13 @@
 #-*- coding: utf-8 -*-
 from pathlib import Path
 from datetime import datetime
-import rsa
 from hash_functions import encode_content_sha1
 from display_keys import get_key, log_msg
 
 PRIVATE_KEY_FILE = 'private_key_1024.pem'
 PUBLIC_KEY_FILE  = 'public_key_1024.pem'
 BLOCK_SIZE = 2**20
-SHA1_BIT_LENGTH = 20 * 8
+SHA1_DIGEST_SIZE = 20
 FILE_NAME = 'zayava.docx'
 
 def encrypt_rsa(bi_message: bytes, private_key, l: int):
@@ -21,7 +20,6 @@ def encrypt_rsa(bi_message: bytes, private_key, l: int):
 
 # get private and public keys 
 priv_key = get_key(PRIVATE_KEY_FILE, 'pr')
-publ_key = get_key(PUBLIC_KEY_FILE, 'pb')
 
 #log_msg(f"private key: {priv_key}\npublic key: {publ_key}'\n'")
 
@@ -43,7 +41,7 @@ log_msg(f"Formed metadata: \n{metadata_to_encrypt}{hashed_data}")
 
 # generate signature with metadata and public key
 M = metadata_to_encrypt.encode(encoding="utf8") + hashed_data
-signature = encrypt_rsa(M, priv_key, SHA1_BIT_LENGTH)
+signature = encrypt_rsa(M, priv_key, SHA1_DIGEST_SIZE * 8)
 with open(FILE_NAME + '.sgn', 'wb') as outf:
     outf.write(signature)
 

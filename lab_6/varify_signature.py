@@ -1,3 +1,4 @@
+from distutils.filelist import findall
 from hash_functions import encode_content_sha1
 from display_keys import get_key, log_msg
 
@@ -28,11 +29,15 @@ with open(FILE_NAME + '.sgn', 'rb') as inf:
 publ_key = get_key(PUBLIC_KEY_FILE, 'pb')
 
 # get hash and metadata with the signature and public key
-metadata_and_hash = decrypt_rsa(signature, publ_key, SHA1_BIT_LENGTH)
-log_msg(f"Extracted metadata: \n{metadata_and_hash[:-20].decode(encoding='utf8')}{metadata_and_hash[-20:]}")
+M = decrypt_rsa(signature, publ_key, SHA1_BIT_LENGTH)
+log_msg(f"Extracted metadata: \n{M[:-20].decode(encoding='utf8')}{M[-20:]}")
 
 
-hash_from_signature = metadata_and_hash[-20:]
+# hash_from_signature = metadata_and_hash[-20:]
+pattern = b'file hash: '
+start_index = M.find(pattern) + len(pattern)
+# extract 20 following bytes, which hash occupies
+hash_from_signature = M[start_index : start_index + 20]
 log_msg(f"Hash from file: {hashed_data}")
 log_msg(f"Hash from signature: {hash_from_signature}")
 log_msg(f"Varification was successful: {hashed_data == hash_from_signature}")
